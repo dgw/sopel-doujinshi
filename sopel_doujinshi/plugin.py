@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 doujinshi.py - Sopel doujinshi info plugin
 Copyright 2020 dgw
@@ -6,7 +5,7 @@ Licensed under the Eiffel Forum License 2
 
 https://sopel.chat
 """
-from __future__ import unicode_literals, absolute_import, print_function, division
+from __future__ import annotations
 
 import copy
 from datetime import datetime, timezone
@@ -15,7 +14,7 @@ import re
 from lxml import etree
 import requests
 
-from sopel import formatting, module, tools
+from sopel import plugin, tools
 import sopel.tools.time
 
 
@@ -48,12 +47,12 @@ NHENTAI_ID_PATTERN = r'^\d+$'
 NHENTAI_SITENAME = 'nhentai'
 
 
-@module.url(NHENTAI_GALLERY_PATTERN)
+@plugin.url(NHENTAI_GALLERY_PATTERN)
 def nhentai_link(bot, trigger, match):
     nhentai_info(bot, trigger, match.group(1))
 
 
-@module.commands('nhentai', 'nh')
+@plugin.commands('nhentai', 'nh')
 def nhentai_info(bot, trigger, id_=None):
     """Fetch information about a gallery on nhentai."""
     link = False
@@ -61,13 +60,13 @@ def nhentai_info(bot, trigger, id_=None):
         id_ = trigger.group(3)
         if not id_:  # commanded with no argument
             bot.reply('I need a gallery ID number.')
-            return module.NOLIMIT
+            return plugin.NOLIMIT
         else:  # make sure we give a link to the gallery when commanded
             link = True
     if not re.match(NHENTAI_ID_PATTERN, id_):
         if link:  # only reply when commanded; fail silently for bad links
             bot.reply("Sorry, '{}' doesn't look like a valid gallery ID.".format(id_))
-        return module.NOLIMIT
+        return plugin.NOLIMIT
 
 
     # Now the real "fun" begins
