@@ -15,7 +15,6 @@ from lxml import etree
 import requests
 
 from sopel import plugin, tools
-import sopel.tools.time
 
 
 ITEM_TEMPLATE = {
