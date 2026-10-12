@@ -120,9 +120,13 @@ def nhentai_info(bot, trigger, id_=None):
             item['uploaded'] = tools.time.seconds_to_human(
                 datetime.now(timezone.utc) - timestamp)
         elif key in ['artists', 'categories', 'characters', 'languages', 'pages', 'parodies', 'tags']:
+            tag_class = 'tagchip'
+            if key == 'pages':
+                # annoying special case
+                tag_class = 'tag'
             tags = meta_item.xpath(
                 './span[contains(concat(" ", normalize-space(@class), " "), " tags ")]'
-                '//a[contains(concat(" ", normalize-space(@class), " "), " tag ")]'
+                f'//a[contains(concat(" ", normalize-space(@class), " "), " {tag_class} ")]'
                 '//span[contains(concat(" ", normalize-space(@class), " "), " name ")]/text()'
             )
             if tags:
