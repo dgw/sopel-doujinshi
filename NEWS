@@ -1,5 +1,8 @@
 ## Changelog
 
-### 0.1.0
+### 1.0.0
 
-First release of `sopel-doujinshi`.
+First proper release of `sopel-doujinshi`.
+
+Prior to this, the plugin existed for about 7 years as a single Python
+file without any documentation, packaging, or dependency metadata.
