@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import copy
 from datetime import datetime, timezone
+from importlib import metadata
 import re
 
 from lxml import etree
@@ -46,6 +47,35 @@ NHENTAI_ID_PATTERN = r'^\d+$'
 NHENTAI_SITENAME = 'nhentai'
 
 
+PACKAGE_NAME = 'sopel-doujinshi'
+PACKAGE_VERSION = None
+PACKAGE_METADATA = None
+PACKAGE_HOMEPAGE = None
+
+try:
+    PACKAGE_METADATA = metadata.metadata(PACKAGE_NAME)
+    PACKAGE_VERSION = metadata.version(PACKAGE_NAME)
+except metadata.PackageNotFoundError:
+    pass
+
+if PACKAGE_METADATA is not None:
+    PACKAGE_HOMEPAGE = PACKAGE_METADATA.get('Home-page')
+    if not PACKAGE_HOMEPAGE:
+        for project_url in PACKAGE_METADATA.get_all('Project-URL') or []:
+            label, _, url = project_url.partition(',')
+            if label.strip().lower() == 'homepage':
+                PACKAGE_HOMEPAGE = url.strip()
+                break
+
+_user_agent = PACKAGE_NAME
+if PACKAGE_VERSION:
+    _user_agent += '/{}'.format(PACKAGE_VERSION)
+if PACKAGE_HOMEPAGE:
+    _user_agent += ' {}'.format(PACKAGE_HOMEPAGE)
+
+HEADERS = {'User-Agent': _user_agent}
+
+
 @plugin.url(NHENTAI_GALLERY_PATTERN)
 def nhentai_link(bot, trigger, match):
     nhentai_info(bot, trigger, match.group(1))
@@ -71,7 +101,7 @@ def nhentai_info(bot, trigger, id_=None):
     # Now the real "fun" begins
     url = NHENTAI_GALLERY_TEMPLATE.format(id=id_)
     try:
-        r = requests.get(url=url, timeout=(10.0, 4.0))
+        r = requests.get(url=url, timeout=(10.0, 4.0), headers=HEADERS)
     except requests.exceptions.ConnectTimeout:
         return bot.say("[{}] Connection timed out.".format(NHENTAI_SITENAME))
     except requests.exceptions.ConnectionError:
