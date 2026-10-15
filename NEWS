@@ -1,5 +1,14 @@
 ## Changelog
 
+### 1.1.0
+
+Added:
+- Use a custom user-agent string when fetching data (should reduce temporary blocks)
+
+Fixed:
+- Update tag parsing
+
+
 ### 1.0.0
 
 First proper release of `sopel-doujinshi`.
